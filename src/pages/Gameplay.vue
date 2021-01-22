@@ -13,14 +13,17 @@
 
 
       <div class="row text-center">
-        <div class="col-4">
-          <p>Level - 0</p>
+        <div class="col-3">
+          <p>Level - {{level}}</p>
         </div>
-         <div class="col-4">
-          <p>Mode - Easy</p>
+         <div class="col-3">
+          <p>Mode - {{gameMode}}</p>
         </div>
-         <div class="col-4">
-          <p>Toffee count</p>
+         <div class="col-3">
+          <p>Toffees - {{toffeeCount}}</p>
+        </div>
+         <div class="col-3">
+          <p>XP - {{xpPoints}}</p>
         </div>
       </div>
 
@@ -33,7 +36,7 @@
 
       <div class="row">
         <div class="col-12 text-center">
-           <h4 class="text-blue-5">{Mode}</h4>
+           <h4 class="text-blue-5">{{playMode}}</h4>
 
            <!-- <h5 class="">Select from below to get started</h5> -->
         </div>
@@ -127,12 +130,36 @@ export default {
       secondNumber:5,
       timerProgress: 1,
       sign:'+',
+      signValue: 'addition',
       correctAnswer: 1,
       showCorrectAnswer: false,
       intervalTimer: '',
       isAnswerCorrect: false,
       pendingStart: false,
+      playMode: 'Addition',
+
+      gameData: null,
+      level: 0,
+      gameMode: 'Easy',
+      toffeeCount: 0,
+      xpPoints: 0,
     }
+  },
+
+  watch: {
+        // whenever loggeduser changes, this function will run
+        // JSON.parse(localStorage.getItem("userData")) && JSON.parse(localStorage.getItem("userData")).this.signValue ?  JSON.parse(localStorage.getItem("userData")).this.signValue.level : 1212121
+        gameData: function () {
+
+           console.log(this.gameData);
+
+        },
+  },
+
+  
+  
+  mounted(){
+    this.loadDataToSystem();
   },
 
   created(){
@@ -159,6 +186,32 @@ export default {
     
     },
 
+    loadDataToSystem(){
+
+      if(JSON.parse(localStorage.getItem("userData")) && JSON.parse(localStorage.getItem("userData")) != null){
+      // var signValuesss = 'addition';
+      this.gameData = JSON.parse(localStorage.getItem("userData"));
+     
+
+      switch (this.signValue) {
+        case 'addition':
+             this.playMode = 'Addition (+)';
+             this.level = JSON.parse(localStorage.getItem("userData")).addition.level;
+             this.gameMode = JSON.parse(localStorage.getItem("userData")).addition.mode;
+             this.toffeeCount = JSON.parse(localStorage.getItem("userData")).addition.toffee;
+             this.xpPoints = JSON.parse(localStorage.getItem("userData")).addition.xp;
+          break;
+      
+        default:
+          break;
+      }
+
+    }else{
+      this.gameData = null;
+    } 
+
+    },
+
     submitAnswer(){
 
       var num = this.answer;
@@ -172,6 +225,8 @@ export default {
           var expectedAnswer = this.firstNumber + this.secondNumber;
 
           if(originalAnswer == expectedAnswer){
+
+            this.addMarks();
 
             // Math.floor((Math.random() * 100) + 1);
             this.isAnswerCorrect = true;
@@ -232,6 +287,32 @@ export default {
 
     clear(){
       this.answer = '';
+    },
+
+    addMarks(){
+
+      let modifyUserData = JSON.parse(localStorage.getItem("userData"));
+
+      switch (this.signValue) {
+        case 'addition':
+         
+            //Add xp points
+            modifyUserData.addition.xp =  modifyUserData.addition.xp + 100;
+            localStorage.setItem("userData", JSON.stringify(modifyUserData));
+
+            console.log(JSON.parse(localStorage.getItem("userData")));
+
+            this.loadDataToSystem();
+
+              
+          break;
+      
+        default:
+          break;
+      }
+
+      console.log('testing...');
+
     },
 
     flipText(e){
