@@ -120,7 +120,11 @@
 </template>
 
 <script>
+
+let modifyUserData = JSON.parse(localStorage.getItem("userData"));
+
 export default {
+  
   name: 'PageIndex',
 
   data(){
@@ -180,7 +184,7 @@ export default {
           this.timeUp();
           return
         }
-        console.log(this.timerProgress)
+        // console.log(this.timerProgress)
         this.timerProgress = this.timerProgress - 0.1;
       },  intervalTime)
     
@@ -212,6 +216,23 @@ export default {
 
     },
 
+    playSound(sound){
+
+      let audioName = sound;
+
+      var audio = new Audio(require('../assets/sounds/'+audioName+'.mp3'))
+      audio.play();
+
+      setTimeout(() => {
+
+        audio.pause();
+        audio.currentTime = 0;
+        // console.log('stopped');
+
+      },  10000)
+
+    },
+
     submitAnswer(){
 
       var num = this.answer;
@@ -227,6 +248,8 @@ export default {
           if(originalAnswer == expectedAnswer){
 
             this.addMarks();
+
+            this.playSound('victory1');
 
             // Math.floor((Math.random() * 100) + 1);
             this.isAnswerCorrect = true;
@@ -291,13 +314,19 @@ export default {
 
     addMarks(){
 
-      let modifyUserData = JSON.parse(localStorage.getItem("userData"));
+     
 
       switch (this.signValue) {
         case 'addition':
          
             //Add xp points
-            modifyUserData.addition.xp =  modifyUserData.addition.xp + 100;
+            var randomXp = Math.floor(Math.random() * 30-20) + 20;
+            // var randomXp = Math.floor((Math.random() * 30) + 30);
+            modifyUserData.addition.xp =  modifyUserData.addition.xp + randomXp
+            console.log(randomXp);
+
+            this.increaseLevel();
+
             localStorage.setItem("userData", JSON.stringify(modifyUserData));
 
             console.log(JSON.parse(localStorage.getItem("userData")));
@@ -312,6 +341,43 @@ export default {
       }
 
       console.log('testing...');
+
+    },
+
+    increaseLevel(){
+
+      switch (this.signValue) {
+        case 'addition':
+
+           if (modifyUserData.addition.xp > modifyUserData.addition.recentxp) {
+             var differnceXp = modifyUserData.addition.xp - modifyUserData.addition.recentxp;
+             if(differnceXp >= 100){
+
+               modifyUserData.addition.recentxp =  modifyUserData.addition.xp;
+               modifyUserData.addition.level =  modifyUserData.addition.level + 1;
+
+               localStorage.setItem("userData", JSON.stringify(modifyUserData));
+
+               console.log('levelup');
+
+             }
+
+           }
+           
+
+        
+
+              
+        break;
+      
+      default:
+        break;
+      }
+
+
+
+      
+
 
     },
 

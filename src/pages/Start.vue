@@ -66,10 +66,10 @@ export default {
 
       var userData = { 
           userinfo: { username: this.username,}, 
-          addition: { level: 1, xp: 0, toffee: 5, mode: 'Beginner' }, 
-          subtraction: { level: 1, xp: 0, toffee: 5, mode: 'Beginner' } ,
-          division: { level: 1, xp: 0, toffee: 5, mode: 'Beginner' } ,
-          multiplication: { level: 1, xp: 0, toffee: 5, mode: 'Beginner' } 
+          addition: { level: 1, xp: 0, toffee: 5, mode: 'Beginner', recentxp: 0 }, 
+          subtraction: { level: 1, xp: 0, toffee: 5, mode: 'Beginner', recentxp: 0 } ,
+          division: { level: 1, xp: 0, toffee: 5, mode: 'Beginner', recentxp: 0 } ,
+          multiplication: { level: 1, xp: 0, toffee: 5, mode: 'Beginner', recentxp: 0 } 
       }
 
       localStorage.setItem('userData',JSON.stringify(userData));
