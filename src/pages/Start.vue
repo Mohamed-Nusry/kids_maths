@@ -65,9 +65,9 @@ export default {
       // };
 
       var userData = { 
-          userinfo: { username: this.username,}, 
+          userinfo: { username: this.username, toffee: 10}, 
           addition: { level: 1, xp: 0, toffee: 5, mode: 'Beginner', recentxp: 0 }, 
-          subtraction: { level: 1, xp: 0, toffee: 5, mode: 'Beginner', recentxp: 0 } ,
+          subtraction: { level: 10, xp: 110, toffee: 115, mode: 'Beginner', recentxp: 110 } ,
           division: { level: 1, xp: 0, toffee: 5, mode: 'Beginner', recentxp: 0 } ,
           multiplication: { level: 1, xp: 0, toffee: 5, mode: 'Beginner', recentxp: 0 } 
       }

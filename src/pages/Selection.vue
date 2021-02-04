@@ -82,8 +82,26 @@ export default {
   },
 
   methods: {
-    navigateToGameplay(){
-      this.$router.push('gameplay');
+    navigateToGameplay(mode){
+
+      switch (mode) {
+        case 1:
+
+            this.$router.push('addition');
+
+          
+          break;
+
+        case 2:
+
+            this.$router.push('subtraction');
+
+          
+          break;
+      
+        default:
+          break;
+      }
     }
   }
 

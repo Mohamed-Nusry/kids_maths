@@ -58,6 +58,7 @@
             <input :disabled="pendingStart" @keyup.enter="submitAnswer" class="answerType" autofocus type="text" v-model="answer" placeholder="Answer"  name="textbox" style="" />
             
 
+           <h5 v-if="tryAgainBanner"><span> <q-icon name="close" size="lg" color="red" /> </span> Try Again</h5>
            <h5 v-if="showCorrectAnswer"><span> <q-icon name="close" size="lg" color="red" /> </span> The Answer = {{this.correctAnswer}}</h5>
            <h5 v-if="isAnswerCorrect"><span> <q-icon name="check" size="lg" color="green" /> </span> Correct Answer</h5>
 
@@ -139,6 +140,7 @@ export default {
       showCorrectAnswer: false,
       intervalTimer: '',
       isAnswerCorrect: false,
+      tryAgainBanner: false,
       pendingStart: false,
       playMode: 'Addition',
 
@@ -147,6 +149,8 @@ export default {
       gameMode: 'Easy',
       toffeeCount: 0,
       xpPoints: 0,
+
+      // soundPlayable: true,
     }
   },
 
@@ -195,6 +199,8 @@ export default {
       if(JSON.parse(localStorage.getItem("userData")) && JSON.parse(localStorage.getItem("userData")) != null){
       // var signValuesss = 'addition';
       this.gameData = JSON.parse(localStorage.getItem("userData"));
+
+      this.toffeeCount = JSON.parse(localStorage.getItem("userData")).userinfo.toffee;
      
 
       switch (this.signValue) {
@@ -202,7 +208,7 @@ export default {
              this.playMode = 'Addition (+)';
              this.level = JSON.parse(localStorage.getItem("userData")).addition.level;
              this.gameMode = JSON.parse(localStorage.getItem("userData")).addition.mode;
-             this.toffeeCount = JSON.parse(localStorage.getItem("userData")).addition.toffee;
+            //  this.toffeeCount = JSON.parse(localStorage.getItem("userData")).addition.toffee;
              this.xpPoints = JSON.parse(localStorage.getItem("userData")).addition.xp;
           break;
       
@@ -216,21 +222,48 @@ export default {
 
     },
 
-    playSound(sound){
+    playSound(sound,status){
+
+      console.log(status);
 
       let audioName = sound;
 
-      var audio = new Audio(require('../assets/sounds/'+audioName+'.mp3'))
-      audio.play();
+      var audio = new Audio(require('../../assets/sounds/'+audioName+'.mp3'))
 
-      setTimeout(() => {
+      
+     
+
+      if(status == true){
+
+        
+
+        audio.play();
+
+        setTimeout(() => {
+
+          audio.pause();
+          audio.currentTime = 0;
+          // console.log('stopped');
+
+        },  10000)
+
+      }else{
 
         audio.pause();
         audio.currentTime = 0;
-        // console.log('stopped');
+        
+      }
 
-      },  10000)
 
+    },
+
+    addToffeCount(){
+      
+      //max - min + 1 + min
+      var countToffee = Math.floor(Math.random() * (10-1+1)) + 1;
+      modifyUserData.userinfo.toffee = modifyUserData.userinfo.toffee + countToffee;
+      localStorage.setItem("userData", JSON.stringify(modifyUserData));
+      
     },
 
     submitAnswer(){
@@ -247,11 +280,15 @@ export default {
 
           if(originalAnswer == expectedAnswer){
 
+            this.addToffeCount();
+
             this.addMarks();
 
-            this.playSound('victory1');
+          
+            this.playSound('victory1',true);
 
             // Math.floor((Math.random() * 100) + 1);
+            this.tryAgainBanner = false;
             this.isAnswerCorrect = true;
             this.pendingStart = true;
             clearInterval(this.intervalTimer);
@@ -263,6 +300,14 @@ export default {
             // this.startProgressTimer(1000);
           }else{
             this.clear();
+            
+            this.tryAgainBanner = true;
+
+            setTimeout(() => {
+
+              this.tryAgainBanner = false;
+
+            },  5000)
           }
           
           break;
@@ -294,16 +339,20 @@ export default {
         this.timerProgress = 1;
         this.startProgressTimer(1000);
 
+        this.playSound('victory1',false);
+
     },
 
     timeUp(){
       this.correctAnswer = this.firstNumber + this.secondNumber;
       this.showCorrectAnswer = true;
+      this.tryAgainBanner = false;
       this.pendingStart = true;
     },
 
     generateNumbers(){
       this.showCorrectAnswer = false;
+      this.tryAgainBanner = false;
       this.isAnswerCorrect = false;
       this.pendingStart = false;
     },
@@ -315,12 +364,56 @@ export default {
     addMarks(){
 
      
-
+      //Since XP points are different for each mode we have to add switch statement
       switch (this.signValue) {
         case 'addition':
          
             //Add xp points
-            var randomXp = Math.floor(Math.random() * 30-20) + 20;
+            //max - min + 1 + min
+
+            var randomXp = 0;
+            //XP points change according to level and following conditions check those and add XP points and change level mode
+            if(modifyUserData.addition.level > 0 && modifyUserData.addition.level < 10){
+              randomXp = Math.floor(Math.random() * (30-20+1)) + 20;
+              modifyUserData.addition.mode = 'Beginner';
+            }else{
+
+              if(modifyUserData.addition.level >= 10 && modifyUserData.addition.level < 25){
+                randomXp = Math.floor(Math.random() * (25-10+1)) + 10;
+                modifyUserData.addition.mode = 'Easy';
+
+              }else{
+
+                if(modifyUserData.addition.level >= 25 && modifyUserData.addition.level < 50){
+
+                  randomXp = Math.floor(Math.random() * (15-8+1)) + 8;
+                  modifyUserData.addition.mode = 'Medium';
+
+                }else{
+
+                  if(modifyUserData.addition.level >= 50 && modifyUserData.addition.level < 100){
+
+                    randomXp = Math.floor(Math.random() * (10-5+1)) + 5;
+                    modifyUserData.addition.mode = 'Pro';
+
+                  }else{
+
+                    randomXp = Math.floor(Math.random() * (5-2+1)) + 2;
+                    modifyUserData.addition.mode = 'Champion';
+                    
+
+                  }
+                  
+
+                }
+
+
+              }
+            }
+
+           
+
+           
             // var randomXp = Math.floor((Math.random() * 30) + 30);
             modifyUserData.addition.xp =  modifyUserData.addition.xp + randomXp
             console.log(randomXp);
@@ -398,9 +491,6 @@ export default {
 
 
 <style scoped>
-  #answerBox {
-   
-  }
 
   .answerType{
     border-radius: 7px;
