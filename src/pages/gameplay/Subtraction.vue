@@ -172,10 +172,64 @@ export default {
 
   created(){
     
-     this.startProgressTimer(1000);
+    var actualIntervalTime = this.getIntervalTime();
+    console.log(actualIntervalTime);
+    this.startProgressTimer(actualIntervalTime);
   },
 
   methods: {
+
+    getIntervalTime(){
+
+      //Calculate Interval time according to level
+     switch (this.signValue) {
+        case 'subtraction':
+         
+            if(modifyUserData.subtraction.level > 0 && modifyUserData.subtraction.level < 10){
+
+              return 5000;
+              
+            }else{
+
+              if(modifyUserData.subtraction.level >= 10 && modifyUserData.subtraction.level < 25){
+               
+               return 4200;
+
+              }else{
+
+                if(modifyUserData.subtraction.level >= 25 && modifyUserData.subtraction.level < 50){
+
+                 return 3200;
+
+                }else{
+
+                  if(modifyUserData.subtraction.level >= 50 && modifyUserData.subtraction.level < 100){
+
+                   return 2500;
+
+                  }else{
+
+                    return 1500;
+                    
+
+                  }
+                  
+
+                }
+
+
+              }
+            }
+
+              
+          break;
+      
+        default:
+          break;
+      }
+      
+    },
+
 
     startProgressTimer(intervalTime){
        var interval = setInterval(() => {
@@ -304,7 +358,13 @@ export default {
         this.secondNumber = Math.floor((Math.random() * 10) + 10);
         this.clear();
         this.timerProgress = 1;
-        this.startProgressTimer(1000);
+
+        var actualIntervalTime = this.getIntervalTime();
+        console.log(actualIntervalTime);
+        this.startProgressTimer(actualIntervalTime);
+
+
+      
 
         this.playSound('victory1',false);
 

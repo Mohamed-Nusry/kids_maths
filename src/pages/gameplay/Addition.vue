@@ -171,11 +171,63 @@ export default {
   },
 
   created(){
-    
-     this.startProgressTimer(1000);
+     var actualIntervalTime = this.getIntervalTime();
+     console.log(actualIntervalTime);
+     this.startProgressTimer(actualIntervalTime);
   },
 
   methods: {
+
+    getIntervalTime(){
+
+      //Calculate Interval time according to level
+     switch (this.signValue) {
+        case 'addition':
+         
+            if(modifyUserData.addition.level > 0 && modifyUserData.addition.level < 10){
+
+              return 5000;
+              
+            }else{
+
+              if(modifyUserData.addition.level >= 10 && modifyUserData.addition.level < 25){
+               
+               return 4200;
+
+              }else{
+
+                if(modifyUserData.addition.level >= 25 && modifyUserData.addition.level < 50){
+
+                 return 3200;
+
+                }else{
+
+                  if(modifyUserData.addition.level >= 50 && modifyUserData.addition.level < 100){
+
+                   return 2500;
+
+                  }else{
+
+                    return 1500;
+                    
+
+                  }
+                  
+
+                }
+
+
+              }
+            }
+
+              
+          break;
+      
+        default:
+          break;
+      }
+      
+    },
 
     startProgressTimer(intervalTime){
        var interval = setInterval(() => {
@@ -188,7 +240,7 @@ export default {
           this.timeUp();
           return
         }
-        // console.log(this.timerProgress)
+        console.log(this.timerProgress)
         this.timerProgress = this.timerProgress - 0.1;
       },  intervalTime)
     
@@ -245,7 +297,7 @@ export default {
           audio.currentTime = 0;
           // console.log('stopped');
 
-        },  10000)
+        },  5000)
 
       }else{
 
@@ -337,7 +389,10 @@ export default {
         this.secondNumber = Math.floor((Math.random() * 10) + 10);
         this.clear();
         this.timerProgress = 1;
-        this.startProgressTimer(1000);
+
+        var actualIntervalTime = this.getIntervalTime();
+        console.log(actualIntervalTime);
+        this.startProgressTimer(actualIntervalTime);
 
         this.playSound('victory1',false);
 
